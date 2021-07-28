@@ -1420,6 +1420,7 @@ Resource.actions = {
 /**
  * Install plugin.
  */
+var vueInstance;
 
 function plugin(Vue) {
   if (plugin.installed) {
@@ -1459,9 +1460,17 @@ function plugin(Vue) {
   });
 }
 
-if (typeof window !== 'undefined' && window.Vue && !window.Vue.resource) {
-  window.Vue.use(plugin);
+function register(Vue) {
+  vueInstance = Vue;
+}
+function install() {
+  if (typeof window !== 'undefined' && window.Vue && !window.Vue.resource && window.Vue.use) {
+    window.Vue.use(plugin);
+  } else if (vueInstance) {
+    vueInstance.use(plugin);
+  }
 }
 
 export default plugin;
+export { register, install };
 export { Url, Http, Resource };

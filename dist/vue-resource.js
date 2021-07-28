@@ -5,10 +5,10 @@
  */
 
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define(factory) :
-    (global.VueResource = factory());
-}(this, (function () { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+    (factory((global.VueResource = {})));
+}(this, (function (exports) { 'use strict';
 
     /**
      * Promises/A+ polyfill v1.1.4 (https://github.com/bramstein/promis)
@@ -1426,6 +1426,7 @@
     /**
      * Install plugin.
      */
+    var vueInstance;
 
     function plugin(Vue) {
       if (plugin.installed) {
@@ -1465,10 +1466,21 @@
       });
     }
 
-    if (typeof window !== 'undefined' && window.Vue && !window.Vue.resource) {
-      window.Vue.use(plugin);
+    function register(Vue) {
+      vueInstance = Vue;
+    }
+    function install() {
+      if (typeof window !== 'undefined' && window.Vue && !window.Vue.resource && window.Vue.use) {
+        window.Vue.use(plugin);
+      } else if (vueInstance) {
+        vueInstance.use(plugin);
+      }
     }
 
-    return plugin;
+    exports.register = register;
+    exports.install = install;
+    exports.default = plugin;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
 
 })));

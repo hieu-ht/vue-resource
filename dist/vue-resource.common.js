@@ -6,6 +6,8 @@
 
 'use strict';
 
+Object.defineProperty(exports, '__esModule', { value: true });
+
 /**
  * Promises/A+ polyfill v1.1.4 (https://github.com/bramstein/promis)
  */
@@ -1422,6 +1424,7 @@ Resource.actions = {
 /**
  * Install plugin.
  */
+var vueInstance;
 
 function plugin(Vue) {
   if (plugin.installed) {
@@ -1461,8 +1464,17 @@ function plugin(Vue) {
   });
 }
 
-if (typeof window !== 'undefined' && window.Vue && !window.Vue.resource) {
-  window.Vue.use(plugin);
+function register(Vue) {
+  vueInstance = Vue;
+}
+function install() {
+  if (typeof window !== 'undefined' && window.Vue && !window.Vue.resource && window.Vue.use) {
+    window.Vue.use(plugin);
+  } else if (vueInstance) {
+    vueInstance.use(plugin);
+  }
 }
 
-module.exports = plugin;
+exports.register = register;
+exports.install = install;
+exports.default = plugin;
